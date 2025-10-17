@@ -1,35 +1,28 @@
 import main
 
-# Простой способ подменить input
 def fake_input(text):
     return text
 
-# Тест когда все работает
-def test_main_good_expression():
-    # Подменяем input чтобы он возвращал "2 + 3"
+def test_main_well-well_expression():
     main.input = lambda: "2 + 3"
     result = main.main()
     assert result == 5
 
-# Тест когда делим на ноль
 def test_main_divide_by_zero():
     main.input = lambda: "5 / 0" 
     result = main.main()
     assert result == 'Ошибка!'
 
-# Тест с ошибкой в выражении
 def test_main_bad_expression():
     main.input = lambda: "2 + + 3"
     result = main.main()
     assert result == 'Ошибка!'
 
-# Тест с одним числом
 def test_main_one_number():
     main.input = lambda: "42"
     result = main.main()
     assert result == 42
 
-# Тест со скобками
 def test_main_with_brackets():
     main.input = lambda: "(2 + 3) * 4"
     result = main.main()
