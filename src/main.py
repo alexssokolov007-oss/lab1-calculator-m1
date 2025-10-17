@@ -1,5 +1,5 @@
 from src.costants import OPERATIONS
-from calculator.calculator import calculate_expression
+from src.calculator import calculate_expression
 
 
 def main() -> float | str:
@@ -19,3 +19,5 @@ def main() -> float | str:
 
 if __name__ == "__main__":
     main()
+
+
