@@ -1,5 +1,5 @@
 import pytest
-from calculator.calculator import calculate_expression
+from src.calculator import calculate_expression
 from src.constants import OPERATIONS
 
 def test_basic_arithmetic():
