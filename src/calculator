@@ -1,0 +1,13 @@
+from src.constans import Tokenizer, Parser
+
+def calculate_expression(expression):
+    expression = expression.strip()
+    if not expression:
+        raise ValueError("Выражение не может быть пустым")
+    
+    token_maker = Tokenizer(expression)
+    expression_parser = Parser(token_maker)
+    
+    result = expression_parser.parse()
+    
+    return result
