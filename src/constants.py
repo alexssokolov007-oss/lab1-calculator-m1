@@ -1,1 +1,9 @@
-SAMPLE_CONSTANT: int = 10
+OPERATIONS = {
+    '+': lambda x, y: x + y,
+    '-': lambda x, y: x - y, 
+    '*': lambda x, y: x * y,
+    '/': lambda x, y: x / y,
+    '**': lambda x, y: x ** y,
+    '//': lambda x, y: x // y,
+    '%': lambda x, y: x % y
+}
