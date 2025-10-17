@@ -1,0 +1,53 @@
+import pytest
+from calculator.calculator import calculate_expression
+from src.constants import OPERATIONS
+
+def test_basic_arithmetic():
+    assert calculate_expression("2 + 3") == 5.0
+    assert calculate_expression("10 - 4") == 6.0
+    assert calculate_expression("3 * 5") == 15.0
+    assert calculate_expression("15 / 3") == 5.0
+
+def test_operator_priority():
+    assert calculate_expression("2 + 3 * 4") == 14.0  # 2 + 12
+    assert calculate_expression("(2 + 3) * 4") == 20.0  # 5 * 4
+
+def test_power_operations():
+    assert calculate_expression("2 ** 3") == 8.0
+    assert calculate_expression("2 ** 3 ** 2") == 512.0  # право-ассоциативность
+
+def test_integer_division_and_modulo():
+    assert calculate_expression("7 // 2") == 3.0
+    assert calculate_expression("7 % 2") == 1.0
+
+def test_unary_operators():
+    assert calculate_expression("-5") == -5.0
+    assert calculate_expression("+10") == 10.0
+    assert calculate_expression("-(3 + 2)") == -5.0
+
+def test_division_by_zero():
+    with pytest.raises(ZeroDivisionError):
+        calculate_expression("5 / 0")
+    with pytest.raises(ZeroDivisionError):
+        calculate_expression("10 // 0")
+
+def test_invalid_syntax():
+    with pytest.raises(SyntaxError):
+        calculate_expression("2 + + 3")
+    with pytest.raises(SyntaxError):
+        calculate_expression("(2 + 3")  # незакрытая скобка
+
+def test_invalid_characters():
+    with pytest.raises(ValueError):
+        calculate_expression("2 + abc")
+
+def test_complex_expressions():
+    assert calculate_expression("(3 + 5) * 2 ** 2") == 32.0  # 8 * 4
+    assert calculate_expression("10 + 2 * 3 - 8 / 4") == 14.0  # 10 + 6 - 2
+
+def test_single_number():
+    assert calculate_expression("42") == 42.0
+
+def test_empty_input():
+    with pytest.raises(ValueError):
+        calculate_expression("")
