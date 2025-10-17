@@ -24,14 +24,14 @@ python main.py
 ## Структура проекта
 ├── src                                                                                                                                        
 │   ├── init.py                                                                                                                                
-│   ├── calculator                                                                                                                        
+│   ├── calculator.py                                                                                                                        
 │   ├── constants.py                                                                                                                           
 │   └── main.py                                                                                                                                
 │                                                                                                                                              
 ├── tests                                                                                                                                      
 │   ├── init.py                                                                                                                                
-│   ├── test_calculator                                                                                                                        
-│   └── test_main                                                                                                                              
+│   ├── test_calculator.py                                                                                                                     
+│   └── test_main.py                                                                                                                           
 │                                                                                                                                              
 ├── .gitignore                                                                                                                                 
 ├── .pre-commit-config.yaml                                                                                                                    
