@@ -24,6 +24,7 @@ python main.py
 ## Структура проекта
 ├── src                                                                                                                                        
 │   ├── init.py                                                                                                                                
+│   ├── calculator                                                                                                                        
 │   ├── constants.py                                                                                                                           
 │   └── main.py                                                                                                                                
 │                                                                                                                                              
