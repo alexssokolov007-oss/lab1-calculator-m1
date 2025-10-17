@@ -180,6 +180,10 @@ def calculate_expression(expression: str) -> float:
      """
     Вычисляет математическое выражение expression - 
     строка с выражением возвращает результат вычисления
+    :return: результат вычисления как float
+    :raises IndexError: если недостаточно операндов для операции
+    :raises ZeroDivisionError: если деление на ноль
+    :raises ValueError: при недопустимом токене или оставшихся лишних операндах
     """
     expression = expression.strip()
     if not expression:
