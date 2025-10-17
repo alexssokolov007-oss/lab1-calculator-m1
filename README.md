@@ -26,12 +26,12 @@ python main.py
 │   ├── init.py  
 │   ├── constants.py            
 │   └── main.py     
-│
+│                                                                                                                                              
 ├── tests
 │   ├── init.py
 │   ├── test_calculator
 │   └── test_main
-│
+│                                                                                                                                              
 ├── .gitignore
 ├── .pre-commit-config.yaml
 ├── README.md
