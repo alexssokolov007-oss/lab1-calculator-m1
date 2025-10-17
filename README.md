@@ -37,5 +37,4 @@ python main.py
 ├── .pre-commit-config.yaml                                                                                                                    
 ├── README.md                                                                                                                                  
 ├── pyproject.toml                                                                                                                             
-├── requirements.txt                                                                                                                           
-└── uv.lock                                                                                                                                    
+└── requirements.txt                                                                                                                           
