@@ -177,6 +177,10 @@ class Parser:
         return result
 
 def calculate_expression(expression: str) -> float:
+     """
+    Вычисляет математическое выражение expression - 
+    строка с выражением возвращает результат вычисления
+    """
     expression = expression.strip()
     if not expression:
         raise ValueError("Выражение не может быть пустым")
