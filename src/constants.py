@@ -17,7 +17,6 @@ class Tokenizer:
         else:
             self.current_char = None
     
-    # Двигаемся вперед по строке
     def next_char(self):
         self.position += 1
         if self.position < len(self.text):
@@ -25,12 +24,10 @@ class Tokenizer:
         else:
             self.current_char = None
     
-    # Пропускаем пробелы
     def skip_whitespace(self):
         while self.current_char and self.current_char.isspace():
             self.next_char()
     
-    # Читаем число (целое или дробное)
     def read_number(self):
         number_str = ""
         dot_count = 0
@@ -43,26 +40,21 @@ class Tokenizer:
             number_str += self.current_char
             self.next_char()
         
-        # Преобразуем строку в число
         if dot_count == 0:
             return int(number_str)
         else:
             return float(number_str)
-    
-    # Получаем следующий токен
+
     def get_next_token(self):
         while self.current_char:
-            # Пропускаем пробелы
             if self.current_char.isspace():
                 self.skip_whitespace()
                 continue
             
-            # Если это цифра или точка - читаем число
             if self.current_char.isdigit() or self.current_char == '.':
                 number_value = self.read_number()
                 return {'type': 'NUMBER', 'value': number_value}
-            
-            # Проверяем все возможные операторы и скобки
+
             if self.current_char == '+':
                 self.next_char()
                 return {'type': 'PLUS'}
@@ -105,33 +97,28 @@ class Parser:
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
         self.current_token = self.tokenizer.get_next_token()
-    
-    # Проверяем текущий токен и переходим к следующему
+
     def check_and_move(self, expected_type):
         if self.current_token['type'] == expected_type:
             self.current_token = self.tokenizer.get_next_token()
         else:
             raise SyntaxError(f"Ожидался {expected_type}, а получили {self.current_token['type']}")
-    
-    # Обрабатываем числа и скобки
+
     def process_factor(self):
         token = self.current_token
-        
-        # Унарные плюс/минус
+
         if token['type'] in ['PLUS', 'MINUS']:
             self.check_and_move(token['type'])
             result = self.process_factor()
             if token['type'] == 'MINUS':
                 return -result
             return result
-        
-        # Число
+
         if token['type'] == 'NUMBER':
             value = token['value']
             self.check_and_move('NUMBER')
             return value
-        
-        # Выражение в скобках
+
         if token['type'] == 'LEFT_BRACKET':
             self.check_and_move('LEFT_BRACKET')
             result = self.process_expression()
@@ -139,8 +126,7 @@ class Parser:
             return result
         
         raise SyntaxError("Некорректное выражение")
-    
-    # Обрабатываем возведение в степень
+
     def process_power(self):
         result = self.process_factor()
         
@@ -149,8 +135,7 @@ class Parser:
             result **= self.process_power()
         
         return result
-    
-    # Обрабатываем умножение, деление и остаток
+
     def process_term(self):
         result = self.process_power()
         
@@ -176,8 +161,7 @@ class Parser:
                 result %= right_value
         
         return result
-    
-    # Обрабатываем сложение и вычитание
+
     def process_expression(self):
         result = self.process_term()
         
@@ -193,8 +177,7 @@ class Parser:
                 result -= right_value
         
         return result
-    
-    # Основная функция парсера
+
     def parse(self):
         result = self.process_expression()
         
