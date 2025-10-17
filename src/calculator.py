@@ -1,197 +1,180 @@
 class Tokenizer:
     def __init__(self, text):
         self.text = text
-        self.position = 0
-        if text:
-            self.current_char = text[0]
+        self.pos = 0
+        self.current_char = text[0] if text else None
+    
+    def next(self):
+        self.pos += 1
+        if self.pos < len(self.text):
+            self.current_char = self.text[self.pos]
         else:
             self.current_char = None
     
-    def next_char(self):
-        self.position += 1
-        if self.position < len(self.text):
-            self.current_char = self.text[self.position]
-        else:
-            self.current_char = None
+    def skip_spaces(self):
+        while self.current_char and self.current_char == ' ':
+            self.next()
     
-    def skip_whitespace(self):
-        while self.current_char and self.current_char.isspace():
-            self.next_char()
-    
-    def read_number(self):
-        number_str = ""
-        dot_count = 0
-        
-        while self.current_char and (self.current_char.isdigit() or self.current_char == '.'):
+    def read_num(self):
+        s = ""
+        dots = 0
+        while self.current_char and (self.current_char in '1234567890.'):
             if self.current_char == '.':
-                dot_count += 1
-                if dot_count > 1:
-                    raise ValueError("В числе не может быть две точки!")
-            number_str += self.current_char
-            self.next_char()
+                dots += 1
+                if dots > 1:
+                    raise ValueError("Две точки в числе!")
+            s += self.current_char
+            self.next()
         
-        if dot_count == 0:
-            return int(number_str)
+        if dots == 0:
+            return int(s)
         else:
-            return float(number_str)
-
-    def get_next_token(self):
+            return float(s)
+    
+    def get_token(self):
         while self.current_char:
-            if self.current_char.isspace():
-                self.skip_whitespace()
+            if self.current_char == ' ':
+                self.skip_spaces()
                 continue
             
-            if self.current_char.isdigit() or self.current_char == '.':
-                number_value = self.read_number()
-                return {'type': 'NUMBER', 'value': number_value}
-
+            if self.current_char in '1234567890.':
+                num = self.read_num()
+                return {'type': 'NUM', 'val': num}
+            
+            # операции
             if self.current_char == '+':
-                self.next_char()
-                return {'type': 'PLUS'}
+                self.next()
+                return {'type': '+'}
             
             if self.current_char == '-':
-                self.next_char()
-                return {'type': 'MINUS'}
+                self.next()
+                return {'type': '-'}
             
             if self.current_char == '*':
-                self.next_char()
+                self.next()
                 if self.current_char == '*':
-                    self.next_char()
-                    return {'type': 'POWER'}
-                return {'type': 'MULTIPLY'}
+                    self.next()
+                    return {'type': '**'}
+                return {'type': '*'}
             
             if self.current_char == '/':
-                self.next_char()
+                self.next()
                 if self.current_char == '/':
-                    self.next_char()
-                    return {'type': 'INT_DIVIDE'}
-                return {'type': 'DIVIDE'}
+                    self.next()
+                    return {'type': '//'}
+                return {'type': '/'}
             
             if self.current_char == '%':
-                self.next_char()
-                return {'type': 'MODULO'}
+                self.next()
+                return {'type': '%'}
             
             if self.current_char == '(':
-                self.next_char()
-                return {'type': 'LEFT_BRACKET'}
+                self.next()
+                return {'type': '('}
             
             if self.current_char == ')':
-                self.next_char()
-                return {'type': 'RIGHT_BRACKET'}
+                self.next()
+                return {'type': ')'}
             
-            raise ValueError(f"Непонятный символ: '{self.current_char}'")
+            raise ValueError(f"Неизвестный символ: {self.current_char}")
         
         return {'type': 'END'}
 
+
 class Parser:
     def __init__(self, tokenizer):
-        self.tokenizer = tokenizer
-        self.current_token = self.tokenizer.get_next_token()
-
-    def check_and_move(self, expected_type):
-        if self.current_token['type'] == expected_type:
-            self.current_token = self.tokenizer.get_next_token()
+        self.t = tokenizer
+        self.cur_tok = self.t.get_token()
+    
+    def eat(self, typ):
+        if self.cur_tok['type'] == typ:
+            self.cur_tok = self.t.get_token()
         else:
-            raise SyntaxError(f"Ожидался {expected_type}, а получили {self.current_token['type']}")
-
-    def process_factor(self):
-        token = self.current_token
-
-        if token['type'] in ['PLUS', 'MINUS']:
-            self.check_and_move(token['type'])
-            result = self.process_factor()
-            if token['type'] == 'MINUS':
-                return -result
-            return result
-
-        if token['type'] == 'NUMBER':
-            value = token['value']
-            self.check_and_move('NUMBER')
-            return value
-
-        if token['type'] == 'LEFT_BRACKET':
-            self.check_and_move('LEFT_BRACKET')
-            result = self.process_expression()
-            self.check_and_move('RIGHT_BRACKET')
-            return result
+            raise SyntaxError(f"Ожидалось {typ}, но получили {self.cur_tok['type']}")
+    
+    def factor(self):
+        tok = self.cur_tok
         
-        raise SyntaxError("Некорректное выражение")
-
-    def process_power(self):
-        result = self.process_factor()
+        if tok['type'] in ['+', '-']:
+            self.eat(tok['type'])
+            res = self.factor()
+            return -res if tok['type'] == '-' else res
         
-        while self.current_token['type'] == 'POWER':
-            self.check_and_move('POWER')
-            result **= self.process_power()
+        if tok['type'] == 'NUM':
+            val = tok['val']
+            self.eat('NUM')
+            return val
         
-        return result
-
-    def process_term(self):
-        result = self.process_power()
+        if tok['type'] == '(':
+            self.eat('(')
+            res = self.expr()
+            self.eat(')')
+            return res
         
-        while self.current_token['type'] in ['MULTIPLY', 'DIVIDE', 'INT_DIVIDE', 'MODULO']:
-            operation = self.current_token['type']
-            self.check_and_move(operation)
+        raise SyntaxError("Ошибка в выражении")
+    
+    def power(self):
+        res = self.factor()
+        
+        while self.cur_tok['type'] == '**':
+            self.eat('**')
+            res **= self.power()
+        
+        return res
+    
+    def term(self):
+        res = self.power()
+        
+        while self.cur_tok['type'] in ['*', '/', '//', '%']:
+            op = self.cur_tok['type']
+            self.eat(op)
+            right = self.power()
             
-            right_value = self.process_power()
-            
-            if operation == 'MULTIPLY':
-                result *= right_value
-            elif operation == 'DIVIDE':
-                if right_value == 0:
-                    raise ZeroDivisionError("Нельзя делить на ноль!")
-                result /= right_value
-            elif operation == 'INT_DIVIDE':
-                if right_value == 0:
-                    raise ZeroDivisionError("Нельзя делить на ноль!")
-                result //= right_value
-            elif operation == 'MODULO':
-                if right_value == 0:
-                    raise ZeroDivisionError("Нельзя делить на ноль!")
-                result %= right_value
+            if op == '*':
+                res *= right
+            elif op == '/':
+                if right == 0:
+                    raise ZeroDivisionError("Деление на 0!")
+                res /= right
+            elif op == '//':
+                if right == 0:
+                    raise ZeroDivisionError("Деление на 0!")
+                res //= right
+            elif op == '%':
+                if right == 0:
+                    raise ZeroDivisionError("Деление на 0!")
+                res %= right
         
-        return result
-
-    def process_expression(self):
-        result = self.process_term()
+        return res
+    
+    def expr(self):
+        res = self.term()
         
-        while self.current_token['type'] in ['PLUS', 'MINUS']:
-            operation = self.current_token['type']
-            self.check_and_move(operation)
+        while self.cur_tok['type'] in ['+', '-']:
+            op = self.cur_tok['type']
+            self.eat(op)
+            right = self.term()
             
-            right_value = self.process_term()
-            
-            if operation == 'PLUS':
-                result += right_value
-            elif operation == 'MINUS':
-                result -= right_value
+            if op == '+':
+                res += right
+            else:
+                res -= right
         
-        return result
-
+        return res
+    
     def parse(self):
-        result = self.process_expression()
-        
-        if self.current_token['type'] != 'END':
-            raise SyntaxError("В выражении есть лишние символы")
-        
+        result = self.expr()
+        if self.cur_tok['type'] != 'END':
+            raise SyntaxError("Лишние символы в конце")
         return result
 
-def calculate_expression(expression: str) -> float:
-     """
-    Вычисляет математическое выражение expression - 
-    строка с выражением возвращает результат вычисления
-    :return: результат вычисления как float
-    :raises IndexError: если недостаточно операндов для операции
-    :raises ZeroDivisionError: если деление на ноль
-    :raises ValueError: при недопустимом токене или оставшихся лишних операндах
-    """
-    expression = expression.strip()
-    if not expression:
-        raise ValueError("Выражение не может быть пустым")
+
+def calculate_expression(s: str) -> float:
+    s = s.strip()
+    if s == "":
+        raise ValueError("Пустая строка")
     
-    token_maker = Tokenizer(expression)
-    expression_parser = Parser(token_maker)
+    t = Tokenizer(s)
+    p = Parser(t)
     
-    result = expression_parser.parse()
-    
-    return result
+    return p.parse()
