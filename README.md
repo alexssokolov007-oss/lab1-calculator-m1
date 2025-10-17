@@ -22,19 +22,19 @@ pip install -r requirements.txt
 python main.py
 
 ## Структура проекта
-├── src
-│   ├── init.py  
-│   ├── constants.py            
-│   └── main.py     
+├── src                                                                                                                                        
+│   ├── init.py                                                                                                                                
+│   ├── constants.py                                                                                                                           
+│   └── main.py                                                                                                                                
 │                                                                                                                                              
-├── tests
-│   ├── init.py
-│   ├── test_calculator
-│   └── test_main
+├── tests                                                                                                                                      
+│   ├── init.py                                                                                                                                
+│   ├── test_calculator                                                                                                                        
+│   └── test_main                                                                                                                              
 │                                                                                                                                              
-├── .gitignore
-├── .pre-commit-config.yaml
-├── README.md
-├── pyproject.toml
-├── requirements.txt
-└── uv.lock
+├── .gitignore                                                                                                                                 
+├── .pre-commit-config.yaml                                                                                                                    
+├── README.md                                                                                                                                  
+├── pyproject.toml                                                                                                                             
+├── requirements.txt                                                                                                                           
+└── uv.lock                                                                                                                                    
