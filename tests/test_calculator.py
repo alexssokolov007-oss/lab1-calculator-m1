@@ -9,8 +9,8 @@ def test_basic_arithmetic():
     assert calculate_expression("15 / 3") == 5
 
 def test_operator_priority():
-    assert calculate_expression("2 + 3 * 4") == 14  # 2 + 12
-    assert calculate_expression("(2 + 3) * 4") == 20  # 5 * 4
+    assert calculate_expression("2 + 3 * 4") == 14
+    assert calculate_expression("(2 + 3) * 4") == 20
 
 def test_power_operations():
     assert calculate_expression("2 ** 3") == 8
@@ -35,15 +35,15 @@ def test_invalid_syntax():
     with pytest.raises(SyntaxError):
         calculate_expression("2 + + 3")
     with pytest.raises(SyntaxError):
-        calculate_expression("(2 + 3")  # незакрытая скобка
+        calculate_expression("(2 + 3")
 
 def test_invalid_characters():
     with pytest.raises(ValueError):
         calculate_expression("2 + abc")
 
 def test_complex_expressions():
-    assert calculate_expression("(3 + 5) * 2 ** 2") == 32  # 8 * 4
-    assert calculate_expression("10 + 2 * 3 - 8 / 4") == 14  # 10 + 6 - 2
+    assert calculate_expression("(3 + 5) * 2 ** 2") == 32
+    assert calculate_expression("10 + 2 * 3 - 8 / 4") == 14
 
 def test_single_number():
     assert calculate_expression("42") == 42
