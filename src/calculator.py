@@ -41,7 +41,6 @@ class Tokenizer:
                 num = self.read_num()
                 return {'type': 'NUM', 'val': num}
             
-            # операции
             if self.current_char == '+':
                 self.next()
                 return {'type': '+'}
