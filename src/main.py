@@ -9,8 +9,8 @@ def main() -> float | str:
         print(result)
         return result
     except Exception:
-        print("Ошибка!")
-        return "Ошибка!"
+        print("Ошибка")
+        return "Ошибка"
 
 if __name__ == "__main__":
     main()
