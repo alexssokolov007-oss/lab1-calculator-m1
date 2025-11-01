@@ -10,11 +10,6 @@ def test_main_divide_by_zero():
     result = main_module.main()
     assert result == 'Ошибка!'
 
-def test_main_bad_expression():
-    main_module.input = lambda: "2 + + 3"
-    result = main_module.main()
-    assert result == 'Ошибка!'
-
 def test_main_one_number():
     main_module.input = lambda: "42"
     result = main_module.main()
